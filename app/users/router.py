@@ -25,8 +25,8 @@ async def login_user(response: Response, user_data: SUserAuth):
     user = await UserService.find_one_or_none(email=user_data.email)
 
     if not user or not verify_password(user_data.password, user.hashed_password):
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED)
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail='These username and password is not valid')
 
-    access_token = create_access_token({'sub': user.id})
+    access_token = create_access_token({'sub': str(user.id)})
     response.set_cookie('access_token', access_token, httponly=True)
     return {'access_token': access_token}
