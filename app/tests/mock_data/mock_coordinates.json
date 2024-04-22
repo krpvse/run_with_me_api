@@ -1,0 +1,17 @@
+[
+  {
+    "runner_id": 1,
+    "latitude": 60.1,
+    "longitude": 31.12
+  },
+  {
+    "runner_id": 1,
+    "latitude": 59.57,
+    "longitude": 30.19
+  },
+  {
+    "runner_id": 2,
+    "latitude": 40.11,
+    "longitude": 28.03
+  }
+]

@@ -1,0 +1,32 @@
+[
+  {
+    "user_id": 1,
+    "name": "Сергей",
+    "age": 27,
+    "description": "Люблю бегать",
+    "distance_from": 7,
+    "distance_to": 12,
+    "speed_from": 10,
+    "speed_to": 15
+  },
+  {
+    "user_id": 2,
+    "name": "Инна",
+    "age": null,
+    "description": "Ищу компаньона для пробежки",
+    "distance_from": null,
+    "distance_to": null,
+    "speed_from": null,
+    "speed_to": null
+  },
+  {
+    "user_id": 3,
+    "name": "Иван",
+    "age": 18,
+    "description": "Профессионал",
+    "distance_from": 20,
+    "distance_to": 40,
+    "speed_from": null,
+    "speed_to": null
+  }
+]

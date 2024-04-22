@@ -7,7 +7,7 @@ UserDoesNotExistsException = HTTPException(
 )
 
 ExistingUserException = HTTPException(
-    status_code=status.HTTP_400_BAD_REQUEST,
+    status_code=status.HTTP_409_CONFLICT,
     detail='User with this email already exists'
 )
 

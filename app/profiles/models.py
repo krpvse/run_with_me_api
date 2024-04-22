@@ -9,7 +9,7 @@ class Coordinates(Base):
     __tablename__ = 'coordinates'
 
     id: Mapped[int_pk]
-    runner_id: Mapped[int] = mapped_column(ForeignKey('runners.user_id'), unique=True)
+    runner_id: Mapped[int] = mapped_column(ForeignKey('runners.user_id'))
     latitude: Mapped[float]
     longitude: Mapped[float]
 
