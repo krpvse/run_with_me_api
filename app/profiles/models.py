@@ -2,7 +2,7 @@ from sqlalchemy import String, ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.database import Base
-from app.services.types import int_pk
+from app.dao.types import int_pk
 
 
 class Coordinates(Base):

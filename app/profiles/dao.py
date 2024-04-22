@@ -2,12 +2,12 @@ from sqlalchemy import select, update
 from sqlalchemy.orm import selectinload
 
 from app.database import session_maker
-from app.services.base import BaseService
+from app.dao.base import BaseDAO
 from app.profiles.models import Users, Runners
 from app.profiles.dto import UserDTO
 
 
-class UsersService(BaseService):
+class UsersDAO(BaseDAO):
     model = Users
 
     @classmethod
@@ -22,7 +22,7 @@ class UsersService(BaseService):
             return user_dto
 
 
-class RunnersService(BaseService):
+class RunnersDAO(BaseDAO):
     model = Runners
 
     @classmethod

@@ -3,7 +3,7 @@ from sqlalchemy import select, insert
 from app.database import session_maker
 
 
-class BaseService:
+class BaseDAO:
     model = None
 
     @classmethod

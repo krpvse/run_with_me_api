@@ -4,7 +4,7 @@ from jose import jwt, JWTError
 from fastapi import Request
 
 from app.settings import settings
-from app.profiles.services import UsersService
+from app.profiles.dao import UsersDAO
 from app.exceptions import (UserDoesNotExistsException, TokenDoesNotExistsException, InvalidTokenException,
                             ExpiredTokenException, NoParamException)
 
@@ -43,7 +43,7 @@ class Dependencies:
         if not user_id:
             raise InvalidTokenException
 
-        user = await UsersService.find_one_or_none(id=int(user_id))
+        user = await UsersDAO.find_one_or_none(id=int(user_id))
         if not user:
             raise UserDoesNotExistsException
 
