@@ -6,7 +6,7 @@ from alembic import context
 
 from app.settings import settings
 from app.database import Base
-from app.users.models import Users
+from app.profiles.models import Users
 
 
 # this is the Alembic Config object, which provides

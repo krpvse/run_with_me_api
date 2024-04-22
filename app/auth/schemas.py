@@ -6,7 +6,11 @@ from pydantic import BaseModel, EmailStr, field_validator, model_validator
 class SUserAuth(BaseModel):
     email: EmailStr
     password1: str
-    password2: str | None = None
+
+
+class SUserReg(SUserAuth):
+    password2: str
+    name: str
 
     @staticmethod
     def __check_on_length(v: str):

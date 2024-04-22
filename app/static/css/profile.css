@@ -1,0 +1,32 @@
+
+/* profile
+   ========================================================================== */
+
+input {
+    width: 17px;
+    border: none;
+}
+
+form button {
+    margin: 10px;
+}
+
+.profile-name,
+.profile-age {
+    font-size: 28px;
+}
+
+.profile-image input {
+    width: 300px;
+    height: 40px;
+    font-size: 14px;
+}
+
+.profile-name input {
+    width: 300px;
+}
+
+.profile-description input {
+    width: 300px;
+    height: 50px;
+}

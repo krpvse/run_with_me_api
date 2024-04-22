@@ -16,6 +16,8 @@ class BaseService:
     @classmethod
     async def add(cls, **data):
         async with session_maker() as session:
-            stmt = insert(cls.model).values(**data)
-            await session.execute(stmt)
+            stmt = insert(cls.model).values(**data).returning(cls.model.id)
+            result = await session.execute(stmt)
+            user_id = result.scalar_one_or_none()
             await session.commit()
+            return user_id

@@ -1,8 +1,17 @@
 from sqlalchemy import String, ForeignKey
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.database import Base
 from app.services.types import int_pk
+
+
+class Coordinates(Base):
+    __tablename__ = 'coordinates'
+
+    id: Mapped[int_pk]
+    runner_id: Mapped[int] = mapped_column(ForeignKey('runners.user_id'), unique=True)
+    latitude: Mapped[float]
+    longitude: Mapped[float]
 
 
 class Users(Base):
@@ -11,6 +20,8 @@ class Users(Base):
     id: Mapped[int_pk]
     email: Mapped[str] = mapped_column(String(length=128), unique=True)
     hashed_password: Mapped[str]
+
+    runner: Mapped['Runners'] = relationship()
 
 
 class Runners(Base):
@@ -26,22 +37,4 @@ class Runners(Base):
     speed_from: Mapped[int | None]
     speed_to: Mapped[int | None]
 
-
-class PlaceTypes(Base):
-    __tablename__ = 'place_types'
-
-    id: Mapped[int_pk]
-    runner_id: Mapped[int] = mapped_column(ForeignKey('runners.user_id'))
-    park: Mapped[bool]
-    street: Mapped[bool]
-    stadium: Mapped[bool]
-    gym: Mapped[bool]
-
-
-class Coordinates(Base):
-    __tablename__ = 'coordinates'
-
-    id: Mapped[int_pk]
-    runner_id: Mapped[int] = mapped_column(ForeignKey('runners.user_id'))
-    latitude: Mapped[int]
-    longitude: Mapped[int]
+    coordinates: Mapped[list['Coordinates']] = relationship()

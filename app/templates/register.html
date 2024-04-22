@@ -4,12 +4,18 @@
 <head>
     <meta charset="UTF-8">
     <title>Регистрация</title>
+    <link rel="stylesheet" href="{{ url_for('static', path='css/normalize.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', path='css/general.css') }}">
 </head>
 
 <body>
 <div class="form-wrap">
     <h1>Регистрация</h1>
   <form action="/submit-registration-form" method="post">
+    <div>
+      <label for="name">Имя</label>
+      <input type="text" name="name" placeholder="введите имя" required>
+    </div>
     <div>
       <label for="email">E-mail</label>
       <input type="email" name="email" placeholder="введите e-mail" required>
