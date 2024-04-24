@@ -45,6 +45,18 @@ async def ac():
         yield ac
 
 
+@pytest.fixture(scope='function')
+async def authenticated_ac():
+    async with AsyncClient(app=fastapi_app, base_url='http://test') as ac:
+        response = await ac.post('/api/auth/login', json={
+            'email': 'karpov@gmail.com',
+            'password1': 'Karpov123',
+        })
+        assert response.status_code == 200
+        assert ac.cookies['access_token']
+        yield ac
+
+
 # From "pytest-asyncio" documentation
 @pytest.fixture(scope='session')
 def event_loop(request):

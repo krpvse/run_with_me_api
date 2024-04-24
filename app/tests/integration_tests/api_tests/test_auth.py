@@ -56,3 +56,20 @@ async def test_login(email, password1, status_code, ac: AsyncClient):
         'password1': password1,
     })
     assert response.status_code == status_code
+
+
+# positive - logout authenticated user
+async def test_logout_authenticated(authenticated_ac: AsyncClient):
+    assert authenticated_ac.cookies.get('access_token')
+
+    response = await authenticated_ac.post('/api/auth/logout')
+
+    assert response.status_code == 200
+    assert authenticated_ac.cookies.get('access_token') is None
+
+
+# positive - logout unauthenticated user
+async def test_logout_unauthenticated(ac: AsyncClient):
+    response = await ac.post('/api/auth/logout')
+    assert response.status_code == 200
+    assert ac.cookies.get('access_token') is None

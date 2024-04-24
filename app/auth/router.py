@@ -2,7 +2,7 @@ from fastapi import APIRouter, Response
 
 from app.auth.schemas import SUserAuth, SUserReg
 from app.auth.auth import get_password_hash, verify_password, create_access_token
-from app.auth.dao import UsersDAO, RunnersDAO
+from app.profiles.dao import UsersDAO, RunnersDAO
 from app.exceptions import InvalidEmailOrPasswordException, ExistingUserException
 
 
