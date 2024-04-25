@@ -1,4 +1,4 @@
-from sqlalchemy import select, insert
+from sqlalchemy import select, insert, update
 
 from app.database import session_maker
 
@@ -21,3 +21,10 @@ class BaseDAO:
             user_id = result.scalar_one_or_none()
             await session.commit()
             return user_id
+
+    @classmethod
+    async def update(cls, update_data: dict, **filter_by):
+        async with session_maker() as session:
+            stmt = update(cls.model).filter_by(**filter_by).values(**update_data)
+            await session.execute(stmt)
+            await session.commit()

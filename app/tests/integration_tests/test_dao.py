@@ -1,7 +1,7 @@
 import pytest
 import sqlalchemy
 
-from app.profiles.dao import UsersDAO
+from app.profiles.dao import UsersDAO, RunnersDAO
 
 
 @pytest.mark.parametrize('filter_by,is_present', [
@@ -42,3 +42,32 @@ async def test_add_positive(data):
 async def test_add_negative(data):
     with pytest.raises(sqlalchemy.exc.IntegrityError):
         await UsersDAO.add(**data)
+
+
+@pytest.mark.parametrize('filter_by,update_data,is_changed', [
+    # positive
+    ({'user_id': 1}, {'name': 'Success Test Update Name', 'age': 35}, True),
+    ({'user_id': 1}, {'age': None}, True),
+])
+async def test_update_positive(filter_by, update_data, is_changed):
+    data_before = await RunnersDAO.find_one_or_none(**filter_by)
+    await RunnersDAO.update(update_data, **filter_by)
+    data_after = await RunnersDAO.find_one_or_none(**filter_by)
+
+    assert is_changed == (data_before != data_after)
+    if is_changed:
+        for k, v in update_data.items():
+            assert k in data_after.__dict__
+            assert data_after.__dict__[k] == v
+
+
+@pytest.mark.parametrize('filter_by,update_data,exception_type', [
+    # negative -  key does not exist
+    ({'user_id': 1}, {'wrong_key': 'wrong_value'}, sqlalchemy.exc.CompileError),
+
+    # negative - constraints
+    ({'user_id': 1}, {'name': None}, sqlalchemy.exc.IntegrityError),
+])
+async def test_update_negative(filter_by, update_data, exception_type):
+    with pytest.raises(exception_type):
+        await RunnersDAO.update(update_data, **filter_by)

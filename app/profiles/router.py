@@ -27,7 +27,8 @@ async def edit_profile(profile_id: int, update_data: SProfile):
     user = await UsersDAO.find_one_or_none(id=profile_id)
     if not user:
         raise UserDoesNotExistsException
-    await RunnersDAO.update_profile(profile_id=profile_id, update_data=update_data)
+    update_data = update_data.dict(exclude_none=True)
+    await RunnersDAO.update(update_data=update_data, user_id=profile_id)
 
 
 @router.post('/download-profile-image/{profile_id}', dependencies=[Depends(disallow_without_owner_permissions)])
