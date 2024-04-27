@@ -9,6 +9,15 @@ class Settings(BaseSettings):
 
     SECRET_KEY: str
     HASH_ALGORITHM: str
+    DOMAIN: str
+
+    REDIS_HOST: str
+    REDIS_PORT: int
+
+    SMTP_HOST: str
+    SMTP_PORT: int
+    SMTP_USER: str
+    SMTP_PASSWORD: str
 
     POSTGRES_HOST: str
     POSTGRES_USER: str
@@ -29,6 +38,14 @@ class Settings(BaseSettings):
     @property
     def TEST_DATABASE_URL(cls):
         return f'postgresql+asyncpg://{cls.TEST_POSTGRES_USER}:{cls.TEST_POSTGRES_PASSWORD}@{cls.TEST_POSTGRES_HOST}:{cls.TEST_POSTGRES_PORT}/{cls.TEST_POSTGRES_DB}'
+
+    @property
+    def REDIS_URL(cls):
+        return f'redis://{cls.REDIS_HOST}:{cls.REDIS_PORT}'
+
+    @property
+    def DOMAIN_URL(cls):
+        return f'https://{cls.DOMAIN}' if cls.MODE == 'PROD' else f'http://127.0.0.1:8000'
 
 
 settings = Settings()

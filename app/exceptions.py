@@ -1,9 +1,19 @@
 from fastapi import HTTPException, status
 
 
-UserDoesNotExistsException = HTTPException(
+UserDoesNotExistException = HTTPException(
     status_code=status.HTTP_400_BAD_REQUEST,
-    detail='This user does not exists'
+    detail='This user does not exist'
+)
+
+NotExistingConfirmationCodeException = HTTPException(
+    status_code=status.HTTP_400_BAD_REQUEST,
+    detail='This confirmation code does not exist'
+)
+
+NotConfirmedEmailException = HTTPException(
+    status_code=status.HTTP_400_BAD_REQUEST,
+    detail='Email is not confirmed. Check out link in email'
 )
 
 ExistingUserException = HTTPException(

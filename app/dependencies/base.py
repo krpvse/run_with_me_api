@@ -5,7 +5,7 @@ from fastapi import Request
 
 from app.settings import settings
 from app.profiles.dao import UsersDAO
-from app.exceptions import (UserDoesNotExistsException, TokenDoesNotExistsException, InvalidTokenException,
+from app.exceptions import (UserDoesNotExistException, TokenDoesNotExistsException, InvalidTokenException,
                             ExpiredTokenException, NoParamException)
 
 
@@ -45,6 +45,6 @@ class Dependencies:
 
         user = await UsersDAO.find_one_or_none(id=int(user_id))
         if not user:
-            raise UserDoesNotExistsException
+            raise UserDoesNotExistException
 
         return user

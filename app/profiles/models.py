@@ -19,6 +19,7 @@ class Users(Base):
 
     id: Mapped[int_pk]
     email: Mapped[str] = mapped_column(String(length=128), unique=True)
+    confirmed_email: Mapped[bool] = mapped_column(default=False)
     hashed_password: Mapped[str]
 
     runner: Mapped['Runners'] = relationship()

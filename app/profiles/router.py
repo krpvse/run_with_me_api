@@ -5,7 +5,7 @@ from fastapi import APIRouter, UploadFile, Depends
 from app.profiles.schemas import SProfile
 from app.profiles.dao import UsersDAO, RunnersDAO
 from app.dependencies.common import disallow_without_owner_permissions
-from app.exceptions import UserDoesNotExistsException
+from app.exceptions import UserDoesNotExistException
 
 
 router = APIRouter(
@@ -18,7 +18,7 @@ router = APIRouter(
 async def get_profile_info(profile_id: int):
     profile_info = await UsersDAO.get_user_info(user_id=profile_id)
     if not profile_info:
-        raise UserDoesNotExistsException
+        raise UserDoesNotExistException
     return profile_info
 
 
@@ -26,7 +26,7 @@ async def get_profile_info(profile_id: int):
 async def edit_profile(profile_id: int, update_data: SProfile):
     user = await UsersDAO.find_one_or_none(id=profile_id)
     if not user:
-        raise UserDoesNotExistsException
+        raise UserDoesNotExistException
     update_data = update_data.dict(exclude_none=True)
     await RunnersDAO.update(update_data=update_data, user_id=profile_id)
 
