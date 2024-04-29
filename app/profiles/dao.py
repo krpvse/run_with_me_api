@@ -5,12 +5,14 @@ from app.database import session_maker
 from app.dao.base import BaseDAO
 from app.profiles.models import Users, Runners
 from app.profiles.dto import UserDTO
+from app.exceptions.error_handlers import dao_error_handler
 
 
 class UsersDAO(BaseDAO):
     model = Users
 
     @classmethod
+    @dao_error_handler
     async def get_user_info(cls, user_id: int):
         async with session_maker() as session:
             query = select(cls.model).where(cls.model.id == user_id).options(

@@ -5,8 +5,8 @@ from fastapi import Request
 
 from app.settings import settings
 from app.profiles.dao import UsersDAO
-from app.exceptions import (UserDoesNotExistException, TokenDoesNotExistsException, InvalidTokenException,
-                            ExpiredTokenException, NoParamException)
+from app.exceptions.exceptions import (UserDoesNotExistException, TokenDoesNotExistsException, InvalidTokenException,
+                                       ExpiredTokenException, NoParamException)
 
 
 class Dependencies:

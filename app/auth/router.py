@@ -7,8 +7,9 @@ from app.profiles.dao import UsersDAO, RunnersDAO
 from app.cache.cache import RegConfirmCodeCache
 from app.tasks.tasks import send_registration_confirmation_email
 from app.settings import settings
-from app.exceptions import (InvalidEmailOrPasswordException, ExistingUserException,
-                            NotExistingConfirmationCodeException, NotConfirmedEmailException)
+from app.logger import logger
+from app.exceptions.exceptions import (InvalidEmailOrPasswordException, ExistingUserException,
+                                       NotExistingConfirmationCodeException, NotConfirmedEmailException)
 
 
 router = APIRouter(
@@ -27,6 +28,7 @@ async def register(user_data: SUserReg):
     hashed_password = AccessToken.get_password_hash(user_data.password1)
     user_id = await UsersDAO.add(email=user_data.email, hashed_password=hashed_password)
     await RunnersDAO.add(user_id=user_id, name=user_data.name)
+    logger.info(f'New user has registered without email confirmation: id{user_id}')
 
     # send registration confirmation code to email
     confirmation_code = create_registration_confirmation_code()
@@ -48,6 +50,8 @@ async def confirm_registration(user_id: int, confirmation_code: UUID4):
 
     await UsersDAO.update({'confirmed_email': True}, id=user_id)
     await RegConfirmCodeCache(code=confirmation_code, user_id=user_id).delete_code()
+    logger.info(f'User confirmed email: id{user_id}')
+
     return {'confirmed_email': True}
 
 
@@ -69,10 +73,13 @@ async def login(response: Response, user_data: SUserAuth):
 
     access_token = AccessToken.create_token({'sub': str(user.id)})
     response.set_cookie('access_token', access_token, httponly=True)
+    logger.debug(f'User is logged in: id{user.id}')
+
     return {'user_id': user.id, 'access_token': access_token}
 
 
 @router.post('/logout')
 async def logout(response: Response):
     response.delete_cookie('access_token')
+
     return {'access_token': None}

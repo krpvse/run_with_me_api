@@ -1,7 +1,7 @@
 from fastapi import Request, HTTPException
 
 from app.dependencies.base import Dependencies
-from app.exceptions import NoPermissionsException
+from app.exceptions.exceptions import NoPermissionsException
 
 
 async def disallow_without_owner_permissions(request: Request):
