@@ -27,11 +27,12 @@ async def edit_profile(profile_id: int, update_data: SProfile):
     user = await UsersDAO.find_one_or_none(id=profile_id)
     if not user:
         raise UserDoesNotExistException
-    print(update_data.dict())
     await RunnersDAO.update(update_data=update_data.dict(), user_id=profile_id)
+    return {'msg': 'Success! Profile is updated', 'profile_id': profile_id}
 
 
 @router.post('/download-profile-image/{profile_id}', dependencies=[Depends(disallow_without_owner_permissions)])
 async def download_profile_image(profile_id: int, file: UploadFile):
     with open(f'app/static/images/profile-images/profile{profile_id}.webp', 'wb+') as file_obj:
         shutil.copyfileobj(file.file, file_obj)
+    return {'msg': 'Success! Profile images is downloaded', 'profile_id': profile_id}

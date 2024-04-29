@@ -39,7 +39,13 @@ async def register(user_data: SUserReg):
         email_to=user_data.email
     )
 
-    return {'user_id': user_id, 'email': user_data.email, 'name': user_data.name, 'confirmation_code': confirmation_code}
+    return {
+        'msg': 'Success! User is registered',
+        'user_id': user_id,
+        'email': user_data.email,
+        'name': user_data.name,
+        'confirmation_code': confirmation_code
+    }
 
 
 @router.get('/confirmation/{user_id}/{confirmation_code}')
@@ -52,7 +58,7 @@ async def confirm_registration(user_id: int, confirmation_code: UUID4):
     await RegConfirmCodeCache(code=confirmation_code, user_id=user_id).delete_code()
     logger.info(f'User confirmed email: id{user_id}')
 
-    return {'confirmed_email': True}
+    return {'msg': 'Success! Email is confirmed'}
 
 
 @router.post('/login')
@@ -75,11 +81,10 @@ async def login(response: Response, user_data: SUserAuth):
     response.set_cookie('access_token', access_token, httponly=True)
     logger.debug(f'User is logged in: id{user.id}')
 
-    return {'user_id': user.id, 'access_token': access_token}
+    return {'msg': 'Success! User is authenticated', 'user_id': user.id, 'access_token': access_token}
 
 
 @router.post('/logout')
 async def logout(response: Response):
     response.delete_cookie('access_token')
-
-    return {'access_token': None}
+    return {'msg': 'Success! User is logout'}
