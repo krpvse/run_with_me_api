@@ -1,3 +1,4 @@
+import asyncio
 from sqlalchemy.exc import SQLAlchemyError, DBAPIError
 from aioredis import RedisError
 from smtplib import SMTPException
@@ -9,23 +10,34 @@ celery_logger = get_task_logger(__name__)
 
 def dao_error_handler(func):
     async def wrapper(*args, **kwargs):
-        try:
-            result = await func(*args, **kwargs)
-            return result
-        except (SQLAlchemyError, DBAPIError) as e:
-            details = {'func_name': func.__name__, 'args': args, 'kwargs': kwargs}
-            fastapi_logger.error(f'SQLAlchemy Exc: {e}\nDetails: {details}', exc_info=True)
+        while True:
+            try:
+                result = await func(*args, **kwargs)
+                return result
+            except ConnectionError as e:
+                details = {'func_name': func.__name__, 'args': args, 'kwargs': kwargs}
+                fastapi_logger.error(f'Connection Error: {e}\nDetails: {details}\nRetry after 10 sec', exc_info=True)
+                await asyncio.sleep(10)
+            except (SQLAlchemyError, DBAPIError) as e:
+                details = {'func_name': func.__name__, 'args': args, 'kwargs': kwargs}
+                fastapi_logger.error(f'SQLAlchemy Exc: {e}\nDetails: {details}', exc_info=True)
+                break
     return wrapper
 
 
 def redis_error_handler(func):
     async def wrapper(*args, **kwargs):
-        try:
-            result = await func(*args, **kwargs)
-            return result
-        except RedisError as e:
-            details = {'func_name': func.__name__, 'args': args, 'kwargs': kwargs}
-            fastapi_logger.error(f'Redis Exc: {e}\nDetails: {details}', exc_info=True)
+        while True:
+            try:
+                result = await func(*args, **kwargs)
+                return result
+            except ConnectionError as e:
+                details = {'func_name': func.__name__, 'args': args, 'kwargs': kwargs}
+                fastapi_logger.error(f'Connection Error: {e}\nDetails: {details}\nRetry after 10 sec', exc_info=True)
+                await asyncio.sleep(10)
+            except RedisError as e:
+                details = {'func_name': func.__name__, 'args': args, 'kwargs': kwargs}
+                fastapi_logger.error(f'Redis Exc: {e}\nDetails: {details}', exc_info=True)
     return wrapper
 
 
