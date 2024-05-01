@@ -5,6 +5,7 @@ from passlib.context import CryptContext
 from jose import jwt
 
 from app.settings import settings
+from app.cache.cache import RegConfirmCodeCache
 
 
 class AccessToken:
@@ -27,5 +28,20 @@ class AccessToken:
         return encoded_jwt
 
 
-def create_registration_confirmation_code() -> str:
-    return str(uuid.uuid4())
+class RegConfirmationCode:
+    def __init__(self, api_url: str, user_id: int):
+        self.__api_url = api_url
+        self.__user_id = user_id
+        self.code = str(uuid.uuid4())
+
+    @property
+    def link(self) -> str:
+        confirmation_url = f'{self.__api_url}{self.__user_id}/{self.code}'
+        return confirmation_url
+
+
+async def get_confirmation_code(api_url: str, user_id: int, to_cache: bool = True):
+    confirmation = RegConfirmationCode(api_url, user_id)
+    if to_cache:
+        await RegConfirmCodeCache(user_id=user_id, code=confirmation.code, expire_time=600).save_code()
+    return confirmation.code, confirmation.link

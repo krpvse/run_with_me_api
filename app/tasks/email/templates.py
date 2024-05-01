@@ -24,3 +24,15 @@ class RegConfirmEmailMessage(UserEmailMessage):
             """,
             subtype='html'
         )
+
+
+class RemindConfirmEmailMessage(RegConfirmEmailMessage):
+    def __init__(self, email_to: EmailStr, confirmation_link: str):
+        super().__init__(email_to, confirmation_link)
+        self.set_content(
+            f"""
+            <h3>Вы так и не завершили регистрацию на сайте {settings.DOMAIN_URL}. Перейдите по ссылке, 
+            чтобы подтвердить почту: {self.confirmation_link}</h3>
+            """,
+            subtype='html'
+        )

@@ -1,7 +1,7 @@
 from sqlalchemy import select
 from sqlalchemy.orm import selectinload
 
-from app.database import session_maker
+from app.database import scoped_session
 from app.dao.base import BaseDAO
 from app.profiles.models import Users, Runners
 from app.profiles.dto import UserDTO
@@ -14,7 +14,7 @@ class UsersDAO(BaseDAO):
     @classmethod
     @dao_error_handler
     async def get_user_info(cls, user_id: int):
-        async with session_maker() as session:
+        async with scoped_session() as session:
             query = select(cls.model).where(cls.model.id == user_id).options(
                 selectinload(cls.model.runner).selectinload(Runners.coordinates)
             )

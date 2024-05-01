@@ -12,6 +12,7 @@ app = celery.Celery(
 )
 
 app.conf.broker_connection_retry_on_startup = True
+app.conf.timezone = 'Europe/Moscow'
 
 
 @celery.signals.setup_logging.connect

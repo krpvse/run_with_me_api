@@ -1,3 +1,5 @@
+import datetime
+
 from sqlalchemy import String, ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
@@ -21,6 +23,7 @@ class Users(Base):
     email: Mapped[str] = mapped_column(String(length=128), unique=True)
     confirmed_email: Mapped[bool] = mapped_column(default=False)
     hashed_password: Mapped[str]
+    registration_date: Mapped[datetime.datetime] = mapped_column(default=datetime.datetime.utcnow())
 
     runner: Mapped['Runners'] = relationship()
 
