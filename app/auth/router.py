@@ -79,10 +79,10 @@ async def login(response: Response, user_data: SUserAuth):
     response.set_cookie('access_token', access_token, httponly=True)
     logger.debug(f'User is logged in: id{user.id}')
 
-    return {'msg': 'Success! User is authenticated', 'user_id': user.id, 'access_token': access_token}
+    return {'msg': 'User is authenticated', 'user_id': user.id, 'access_token': access_token}
 
 
 @router.post('/logout')
 async def logout(response: Response):
     response.delete_cookie('access_token')
-    return {'msg': 'Success! User is logout'}
+    return {'msg': 'User is logout'}

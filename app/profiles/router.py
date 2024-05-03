@@ -1,5 +1,3 @@
-import shutil
-
 from fastapi import APIRouter, UploadFile, Depends
 
 from app.profiles.schemas import SProfile, SCoords
@@ -7,6 +5,8 @@ from app.profiles.dao import UsersDAO, RunnersDAO, CoordinatesDAO
 from app.dependencies.common import disallow_without_owner_permissions
 from app.exceptions.exceptions import UserDoesNotExistException, UnknownAPIException
 from app.profiles.dto import ProfileInfoDTO
+from app.files.images import download_image
+from app.files.files import delete_file
 
 
 router = APIRouter(
@@ -33,9 +33,17 @@ async def edit_profile(profile_id: int, update_data: SProfile):
 
 @router.post('/id{profile_id}/download-image', dependencies=[Depends(disallow_without_owner_permissions)])
 async def download_profile_image(profile_id: int, file: UploadFile):
-    with open(f'app/static/images/profile-images/profile{profile_id}.webp', 'wb+') as file_obj:
-        shutil.copyfileobj(file.file, file_obj)
+    download_image(
+        path=f'app/static/images/profile-images/profile{profile_id}.webp',
+        file=file.file
+    )
     return {'msg': 'Profile image is downloaded', 'profile_id': profile_id}
+
+
+@router.delete('/id{profile_id}/delete-image', dependencies=[Depends(disallow_without_owner_permissions)])
+async def delete_profile_image(profile_id: int):
+    delete_file(f'app/static/images/profile-images/profile{profile_id}.webp')
+    return {'msg': 'Profile image is deleted', 'profile_id': profile_id}
 
 
 @router.get('/id{profile_id}/coordinates')
