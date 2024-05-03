@@ -50,3 +50,8 @@ NoParamException = HTTPException(
     status_code=status.HTTP_400_BAD_REQUEST,
     detail='Parameter you requested is not defined'
 )
+
+UnknownAPIException = HTTPException(
+    status_code=status.HTTP_400_BAD_REQUEST,
+    detail='Something went wrong'
+)

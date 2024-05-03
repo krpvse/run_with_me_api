@@ -1,6 +1,7 @@
 import datetime
 
 from sqlalchemy import String, ForeignKey
+from sqlalchemy.schema import UniqueConstraint
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.database import Base
@@ -14,6 +15,8 @@ class Coordinates(Base):
     runner_id: Mapped[int] = mapped_column(ForeignKey('runners.user_id'))
     latitude: Mapped[float]
     longitude: Mapped[float]
+
+    __table_args__ = (UniqueConstraint('runner_id', 'latitude', 'longitude', name='uniq_runner_id_latitude_longitude'),)
 
 
 class Users(Base):

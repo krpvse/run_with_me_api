@@ -50,3 +50,8 @@ class SProfile(BaseModel):
             if field[0] in self.__not_specified:
                 delattr(self, field[0])
         return self
+
+
+class SCoords(BaseModel):
+    latitude: float
+    longitude: float

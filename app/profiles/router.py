@@ -2,10 +2,11 @@ import shutil
 
 from fastapi import APIRouter, UploadFile, Depends
 
-from app.profiles.schemas import SProfile
-from app.profiles.dao import UsersDAO, RunnersDAO
+from app.profiles.schemas import SProfile, SCoords
+from app.profiles.dao import UsersDAO, RunnersDAO, CoordinatesDAO
 from app.dependencies.common import disallow_without_owner_permissions
-from app.exceptions.exceptions import UserDoesNotExistException
+from app.exceptions.exceptions import UserDoesNotExistException, UnknownAPIException
+from app.profiles.dto import ProfileInfoDTO
 
 
 router = APIRouter(
@@ -14,25 +15,55 @@ router = APIRouter(
 )
 
 
-@router.get('/{profile_id}')
-async def get_profile_info(profile_id: int):
+@router.get('/id{profile_id}')
+async def get_profile_info(profile_id: int) -> ProfileInfoDTO:
     profile_info = await UsersDAO.get_user_info(user_id=profile_id)
     if not profile_info:
         raise UserDoesNotExistException
     return profile_info
 
 
-@router.post('/edit-profile/{profile_id}', dependencies=[Depends(disallow_without_owner_permissions)])
+@router.post('/id{profile_id}/edit', dependencies=[Depends(disallow_without_owner_permissions)])
 async def edit_profile(profile_id: int, update_data: SProfile):
-    user = await UsersDAO.find_one_or_none(id=profile_id)
-    if not user:
-        raise UserDoesNotExistException
-    await RunnersDAO.update(update_data=update_data.dict(), user_id=profile_id)
-    return {'msg': 'Success! Profile is updated', 'profile_id': profile_id}
+    updated_ids = await RunnersDAO.update(update_data=update_data.dict(), user_id=profile_id)
+    if not updated_ids:
+        raise UnknownAPIException
+    return {'msg': 'Profile is updated', 'profile_id': profile_id}
 
 
-@router.post('/download-profile-image/{profile_id}', dependencies=[Depends(disallow_without_owner_permissions)])
+@router.post('/id{profile_id}/download-image', dependencies=[Depends(disallow_without_owner_permissions)])
 async def download_profile_image(profile_id: int, file: UploadFile):
     with open(f'app/static/images/profile-images/profile{profile_id}.webp', 'wb+') as file_obj:
         shutil.copyfileobj(file.file, file_obj)
-    return {'msg': 'Success! Profile images is downloaded', 'profile_id': profile_id}
+    return {'msg': 'Profile image is downloaded', 'profile_id': profile_id}
+
+
+@router.get('/id{profile_id}/coordinates')
+async def get_coordinates(profile_id: int):
+    user = await UsersDAO.find_one_or_none(id=profile_id)
+    if not user:
+        raise UserDoesNotExistException
+    coordinates = await CoordinatesDAO.get_coordinates(runner_id=profile_id)
+    return {'profile_id': profile_id, 'coordinates': coordinates}
+
+
+@router.post('/id{profile_id}/coordinates/add', dependencies=[Depends(disallow_without_owner_permissions)])
+async def add_coordinates(profile_id: int, data: SCoords):
+    new_id = await CoordinatesDAO.add_one(runner_id=profile_id, latitude=data.latitude, longitude=data.longitude)
+    if not new_id:
+        raise UnknownAPIException
+    return {
+        'msg': 'Coordinates is added',
+        'coordinates_id': new_id,
+        'latitude': data.latitude,
+        'longitude': data.longitude,
+        'profile_id': profile_id
+    }
+
+
+@router.delete('/id{profile_id}/coordinates/delete', dependencies=[Depends(disallow_without_owner_permissions)])
+async def delete_coordinates(profile_id: int, coordinates_id: int):
+    deleted_ids = await CoordinatesDAO.delete(runner_id=profile_id, id=coordinates_id)
+    if not deleted_ids:
+        raise UnknownAPIException
+    return {'msg': 'Coordinates is deleted',  'deleted_ids': deleted_ids, 'profile_id': profile_id}

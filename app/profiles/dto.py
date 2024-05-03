@@ -4,6 +4,7 @@ from pydantic import BaseModel, EmailStr
 
 
 class CoordinatesDTO(BaseModel):
+    id: int
     latitude: float
     longitude: float
 
@@ -20,7 +21,7 @@ class RunnerDTO(BaseModel):
     coordinates: Optional[list['CoordinatesDTO']]
 
 
-class UserDTO(BaseModel):
+class ProfileInfoDTO(BaseModel):
     id: int
     email: EmailStr
 
