@@ -1,15 +1,19 @@
 from fastapi import APIRouter, Response
 from pydantic import UUID4
 
-from app.auth.schemas import SUserAuth, SUserReg
-from app.auth.auth import AccessToken, get_confirmation_code
+from app.auth.schemas import SUserAuth, SUserReg, SJWTToken
+from app.auth import utils as auth_utils
 from app.profiles.dao import UsersDAO, RunnersDAO
 from app.cache.cache import RegConfirmCodeCache
 from app.tasks.tasks import send_registration_confirmation_email
 from app.settings import settings
 from app.logger import logger
-from app.exceptions.exceptions import (InvalidEmailOrPasswordException, ExistingUserException,
-                                       NotExistingConfirmationCodeException, NotConfirmedEmailException)
+from app.exceptions.exceptions import (
+    InvalidEmailOrPasswordException,
+    ExistingUserException,
+    NotExistingConfirmationCodeException,
+    NotConfirmedEmailException
+)
 
 
 router = APIRouter(
@@ -25,13 +29,13 @@ async def register(user_data: SUserReg):
         raise ExistingUserException
 
     # add new user in database
-    hashed_password = AccessToken.get_password_hash(user_data.password1)
+    hashed_password = auth_utils.get_password_hash(user_data.password1)
     user_id = await UsersDAO.add_one(email=user_data.email, hashed_password=hashed_password)
     await RunnersDAO.add_one(user_id=user_id, name=user_data.name)
     logger.info(f'New user has registered without email confirmation: id{user_id}')
 
     # send registration confirmation code to email
-    confirm_code, confirm_link = await get_confirmation_code(
+    confirm_code, confirm_link = await auth_utils.create_confirmation_code(
         api_url=f'{settings.DOMAIN_URL}{router.prefix}/confirmation/',
         user_id=user_id,
         to_cache=True
@@ -63,23 +67,28 @@ async def confirm_registration(user_id: int, confirmation_code: UUID4):
 @router.post('/login')
 async def login(response: Response, user_data: SUserAuth):
     user = await UsersDAO.find_one_or_none(email=user_data.email)
-    if not user or not AccessToken.verify_password(user_data.password1, user.hashed_password):
+    if not user or not auth_utils.verify_password(user_data.password1, user.hashed_password):
         raise InvalidEmailOrPasswordException
 
     # check out email on confirmation, if email is not confirmed send letter to do it
     if not user.confirmed_email:
-        confirm_code, confirm_link = await get_confirmation_code(
+        confirm_code, confirm_link = await auth_utils.create_confirmation_code(
             api_url=f'{settings.DOMAIN_URL}{router.prefix}/confirmation/',
             user_id=user.id,
             to_cache=True
         )
         send_registration_confirmation_email.delay(confirmation_link=confirm_link, email_to=user_data.email)
         raise NotConfirmedEmailException
-    access_token = AccessToken.create_token({'sub': str(user.id)})
+
+    access_token = auth_utils.encode_jwt({'sub': str(user.id)})
     response.set_cookie('access_token', access_token, httponly=True)
     logger.debug(f'User is logged in: id{user.id}')
 
-    return {'msg': 'User is authenticated', 'user_id': user.id, 'access_token': access_token}
+    return {
+        'msg': 'User is authenticated',
+        'user_id': user.id,
+        'access_token': SJWTToken(token=access_token, type='Bearer')
+    }
 
 
 @router.post('/logout')

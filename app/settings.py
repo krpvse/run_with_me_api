@@ -8,8 +8,12 @@ class Settings(BaseSettings):
     MODE: Literal['DEV', 'TEST', 'PROD']
 
     SECRET_KEY: str
-    HASH_ALGORITHM: str
     DOMAIN: str
+    PASSWORD_HASH_ALGORITHM: str
+
+    AUTH_JWT_PRIVATE_PATH: str = 'app/auth/certs/jwt-private.pem'
+    AUTH_JWT_PUBLIC_PATH: str = 'app/auth/certs/jwt-public.pem'
+    AUTH_JWT_ALGORITHM: str
 
     REDIS_HOST: str
     REDIS_PORT: int

@@ -10,7 +10,7 @@ from app.tasks.celery import app
 from app.tasks.email.templates import RegConfirmEmailMessage, RemindConfirmEmailMessage
 from app.tasks.email.tasks import send_email
 from app.profiles.dao import UsersDAO, RunnersDAO
-from app.auth.auth import get_confirmation_code
+from app.auth.utils import create_confirmation_code
 
 logger = get_task_logger(__name__)
 
@@ -46,7 +46,7 @@ def check_unconfirmed_users():
             if user_id:
                 logger.info(f'Time of email confirmation expired, user is deleted: {user.email}')
         else:
-            confirm_code, confirm_link = loop.run_until_complete(get_confirmation_code(
+            confirm_code, confirm_link = loop.run_until_complete(create_confirmation_code(
                 api_url=f'{settings.DOMAIN_URL}/api/auth/confirmation/',
                 user_id=user.id,
                 to_cache=True

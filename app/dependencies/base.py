@@ -1,12 +1,17 @@
 from datetime import datetime
-from jose import jwt, JWTError
 
+from jwt import PyJWTError
 from fastapi import Request
 
-from app.settings import settings
+from app.auth.utils import decode_jwt
 from app.profiles.dao import UsersDAO
-from app.exceptions.exceptions import (UserDoesNotExistException, TokenDoesNotExistsException, InvalidTokenException,
-                                       ExpiredTokenException, NoParamException)
+from app.exceptions.exceptions import (
+    UserDoesNotExistException,
+    TokenDoesNotExistsException,
+    InvalidTokenException,
+    ExpiredTokenException,
+    NoParamException
+)
 
 
 class Dependencies:
@@ -31,8 +36,8 @@ class Dependencies:
 
     async def get_current_user(self):
         try:
-            payload = jwt.decode(self.get_access_token(), settings.SECRET_KEY, settings.HASH_ALGORITHM)
-        except (JWTError, AttributeError):
+            payload = decode_jwt(self.get_access_token())
+        except (PyJWTError, AttributeError):
             raise InvalidTokenException
 
         expire = payload.get('exp')

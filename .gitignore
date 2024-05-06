@@ -5,3 +5,5 @@ venv/
 .pytest_cache/
 app/logs/
 celerybeat-schedule
+app/auth/certs/jwt-private.pem
+app/auth/certs/jwt-public.pem

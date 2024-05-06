@@ -8,6 +8,11 @@ class SUserAuth(BaseModel):
     password1: str
 
 
+class SJWTToken(BaseModel):
+    token: str
+    type: str
+
+
 class SUserReg(SUserAuth):
     password2: str
     name: str
