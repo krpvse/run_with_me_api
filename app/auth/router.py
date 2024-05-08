@@ -1,8 +1,9 @@
-from fastapi import APIRouter, Response
+from fastapi import APIRouter, Response, Depends
 from pydantic import UUID4
 
-from app.auth.schemas import SUserAuth, SUserReg, SJWTToken
+from app.auth.schemas import SUserAuth, SUserReg
 from app.auth import utils as auth_utils
+from app.auth.token import create_tokens, recreate_tokens
 from app.profiles.dao import UsersDAO, RunnersDAO
 from app.cache.cache import RegConfirmCodeCache
 from app.tasks.tasks import send_registration_confirmation_email
@@ -64,6 +65,23 @@ async def confirm_registration(user_id: int, confirmation_code: UUID4):
     return {'msg': 'Success! Email is confirmed'}
 
 
+@router.post('/update-jwt')
+def update_jwt_cookies_depends_on_refresh_token(
+        response: Response,
+        tokens: tuple = Depends(recreate_tokens)
+):
+    access_token = tokens[0]
+    refresh_token = tokens[1]
+    response.set_cookie('access_token', access_token, httponly=True)
+    response.set_cookie('refresh_token', refresh_token, httponly=True)
+    return {
+        'msg': 'Tokens is recreated',
+        'access_token': access_token,
+        'refresh_token': refresh_token,
+        'token_type': 'Bearer'
+    }
+
+
 @router.post('/login')
 async def login(response: Response, user_data: SUserAuth):
     user = await UsersDAO.find_one_or_none(email=user_data.email)
@@ -80,18 +98,23 @@ async def login(response: Response, user_data: SUserAuth):
         send_registration_confirmation_email.delay(confirmation_link=confirm_link, email_to=user_data.email)
         raise NotConfirmedEmailException
 
-    access_token = auth_utils.encode_jwt({'sub': str(user.id)})
+    access_token, refresh_token = await create_tokens({'sub': str(user.id)})
     response.set_cookie('access_token', access_token, httponly=True)
+    response.set_cookie('refresh_token', refresh_token, httponly=True)
+
     logger.debug(f'User is logged in: id{user.id}')
 
     return {
         'msg': 'User is authenticated',
         'user_id': user.id,
-        'access_token': SJWTToken(token=access_token, type='Bearer')
+        'access_token': access_token,
+        'refresh_token': refresh_token,
+        'token_type': 'Bearer'
     }
 
 
 @router.post('/logout')
 async def logout(response: Response):
     response.delete_cookie('access_token')
+    response.delete_cookie('refresh_token')
     return {'msg': 'User is logout'}

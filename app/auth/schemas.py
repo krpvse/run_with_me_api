@@ -10,7 +10,7 @@ class SUserAuth(BaseModel):
 
 class SJWTToken(BaseModel):
     token: str
-    type: str
+    type: str = 'Bearer'
 
 
 class SUserReg(SUserAuth):

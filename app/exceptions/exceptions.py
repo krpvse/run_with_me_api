@@ -33,12 +33,17 @@ TokenDoesNotExistsException = HTTPException(
 
 InvalidTokenException = HTTPException(
     status_code=status.HTTP_401_UNAUTHORIZED,
-    detail='This access token is invalid'
+    detail='Token is invalid'
 )
 
 ExpiredTokenException = HTTPException(
     status_code=status.HTTP_401_UNAUTHORIZED,
-    detail='This access token is expired'
+    detail='Token is expired'
+)
+
+FailedToCreateTokenException = HTTPException(
+    status_code=status.HTTP_401_UNAUTHORIZED,
+    detail='Failed to create token'
 )
 
 NoPermissionsException = HTTPException(

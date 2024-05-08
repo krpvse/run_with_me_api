@@ -2,9 +2,9 @@ from fastapi import APIRouter, UploadFile, Depends
 
 from app.profiles.schemas import SProfile, SCoords
 from app.profiles.dao import UsersDAO, RunnersDAO, CoordinatesDAO
-from app.dependencies.common import disallow_without_owner_permissions
-from app.exceptions.exceptions import UserDoesNotExistException, UnknownAPIException
 from app.profiles.dto import ProfileInfoDTO
+from app.dependencies import disallow_without_owner_permissions
+from app.exceptions.exceptions import UserDoesNotExistException, UnknownAPIException
 from app.files.images import download_image
 from app.files.files import delete_file
 

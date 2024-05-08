@@ -1,4 +1,6 @@
 from typing import Literal
+
+import pem
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -11,9 +13,9 @@ class Settings(BaseSettings):
     DOMAIN: str
     PASSWORD_HASH_ALGORITHM: str
 
-    AUTH_JWT_PRIVATE_PATH: str = 'app/auth/certs/jwt-private.pem'
-    AUTH_JWT_PUBLIC_PATH: str = 'app/auth/certs/jwt-public.pem'
     AUTH_JWT_ALGORITHM: str
+    ACCESS_JWT_EXPIRE_MINUTES: int = 1
+    REFRESH_JWT_EXPIRE_MINUTES: int = 43200  # 30 days
 
     REDIS_HOST: str
     REDIS_PORT: int
@@ -50,6 +52,18 @@ class Settings(BaseSettings):
     @property
     def DOMAIN_URL(cls):
         return f'https://{cls.DOMAIN}' if cls.MODE == 'PROD' else f'http://127.0.0.1:8000'
+
+    @property
+    def AUTH_JWT_PRIVATE(cls):
+        certs = pem.parse_file('app/auth/certs/jwt-private.pem')
+        key = str(certs[0])
+        return key
+
+    @property
+    def AUTH_JWT_PUBLIC(cls):
+        certs = pem.parse_file('app/auth/certs/jwt-public.pem')
+        key = str(certs[0])
+        return key
 
 
 settings = Settings()
