@@ -10,6 +10,4 @@ def send_email(message_content: EmailMessage):
     server = SMTP(settings.SMTP_HOST, settings.SMTP_PORT)
     server.starttls()
     server.login(settings.SMTP_USER, settings.SMTP_PASSWORD)
-    result = server.send_message(message_content)
-    is_sent = bool(result)
-    return is_sent
+    server.send_message(message_content)

@@ -6,6 +6,7 @@ from fastapi import Request, HTTPException
 from app.settings import settings
 from app.auth.dao import RefreshJWTDAO
 from app.profiles.dao import UsersDAO
+from app.logger import logger
 from app.exceptions.exceptions import (
     FailedToCreateTokenException,
     InvalidTokenException,
@@ -63,6 +64,7 @@ async def create_refresh_jwt(
 async def create_tokens(payload: dict) -> tuple:
     access_token = create_access_jwt(payload)
     refresh_token = await create_refresh_jwt(payload)
+    logger.debug(f'Access and refresh tokens is created for user id{payload.get("sub")}')
     return access_token, refresh_token
 
 
@@ -100,15 +102,21 @@ async def recreate_tokens(request: Request) -> tuple:
     access_token = request.cookies.get('access_token')
     refresh_token = request.cookies.get('refresh_token')
 
+    user_agent = request.headers.get("user-agent")
+
     try:
         await validate_token(access_token)
+        logger.debug(f'User (user-agent: {user_agent}) requested endpoint with owner permissions.'
+                     f'OK! Access token is valid')
     except (jwt.PyJWTError, AttributeError, HTTPException):
         payload = await validate_token(refresh_token)
-
         user_id = int(payload.get('sub'))
         saved_token = await RefreshJWTDAO.find_one_or_none(user_id=user_id)
         if not saved_token or saved_token.token != refresh_token:
             raise InvalidTokenException
+
         access_token, refresh_token = await create_tokens(payload)
+        logger.debug(f'User (user-agent: {user_agent}) requested endpoint with owner permissions. '
+                     f'Access token is not valid. New tokens is created depends on refresh token')
 
     return access_token, refresh_token

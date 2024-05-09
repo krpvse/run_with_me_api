@@ -21,7 +21,7 @@ def dao_error_handler(func):
             except (SQLAlchemyError, DBAPIError) as e:
                 details = {'func_name': func.__name__, 'args': args, 'kwargs': kwargs}
                 fastapi_logger.error(f'SQLAlchemy Exc: {e}\nDetails: {details}', exc_info=True)
-                break
+                return e
     return wrapper
 
 
@@ -38,6 +38,7 @@ def redis_error_handler(func):
             except RedisError as e:
                 details = {'func_name': func.__name__, 'args': args, 'kwargs': kwargs}
                 fastapi_logger.error(f'Redis Exc: {e}\nDetails: {details}', exc_info=True)
+                return e
     return wrapper
 
 
@@ -49,4 +50,5 @@ def smtp_error_handler(func):
         except SMTPException as e:
             details = {'func_name': func.__name__, 'args': args, 'kwargs': kwargs}
             fastapi_logger.error(f'SMTP Exc: {e}\nDetails: {details}', exc_info=True)
+            return e
     return wrapper
