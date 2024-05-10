@@ -1,5 +1,4 @@
 import json
-
 import logging.config
 import logging.handlers
 

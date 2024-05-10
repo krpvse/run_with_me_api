@@ -1,10 +1,13 @@
 import asyncio
-from sqlalchemy.exc import SQLAlchemyError, DBAPIError
-from aioredis import RedisError
 from smtplib import SMTPException
+
+from aioredis import RedisError
 from celery.utils.log import get_task_logger
+from sqlalchemy.exc import DBAPIError, SQLAlchemyError
 
 from app.logger import logger as fastapi_logger
+
+
 celery_logger = get_task_logger(__name__)
 
 

@@ -1,7 +1,7 @@
 import pytest
 import sqlalchemy
 
-from app.profiles.dao import UsersDAO, RunnersDAO
+from app.profiles.dao import RunnersDAO, UsersDAO
 
 
 @pytest.mark.parametrize('filter_by,is_present', [
@@ -22,7 +22,8 @@ async def test_find_one_or_none(filter_by, is_present):
 
 @pytest.mark.parametrize('data', [
     # positive
-    {'id': 10, 'email': 'test321@gmail.com', 'hashed_password': '$2b$12$ppguFcWTS5FkBudp2cVre.HgBNhAGHQ1/kSh82/InCFihswFFlr2q'},
+    {'id': 10, 'email': 'test321@gmail.com',
+     'hashed_password': '$2b$12$ppguFcWTS5FkBudp2cVre.HgBNhAGHQ1/kSh82/InCFihswFFlr2q'},
 ])
 async def test_add_positive(data):
     user_id = await UsersDAO.add(**data)
@@ -34,7 +35,8 @@ async def test_add_positive(data):
 
 @pytest.mark.parametrize('data', [
     # negative - already exist (primary/unique constraints)
-    {'id': 1, 'email': 'another@gmail.com', 'hashed_password': '$2b$12$ppguFcWTS5FkBudp2cVre.HgBNhAGHQ1/kSh82/InCFihswFFlr2q'},
+    {'id': 1, 'email': 'another@gmail.com',
+     'hashed_password': '$2b$12$ppguFcWTS5FkBudp2cVre.HgBNhAGHQ1/kSh82/InCFihswFFlr2q'},
 
     # negative - not enough values
     {'id': 15},

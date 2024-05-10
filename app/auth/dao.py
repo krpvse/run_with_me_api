@@ -1,8 +1,8 @@
 from sqlalchemy.dialects.postgresql import insert
 
-from app.database import scoped_session
-from app.dao.base import BaseDAO
 from app.auth.models import RefreshJWT
+from app.dao.base import BaseDAO
+from app.database import scoped_session
 from app.exceptions.error_handlers import dao_error_handler
 
 

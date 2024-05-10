@@ -14,7 +14,7 @@ class Settings(BaseSettings):
     PASSWORD_HASH_ALGORITHM: str
 
     AUTH_JWT_ALGORITHM: str
-    ACCESS_JWT_EXPIRE_MINUTES: int = 1
+    ACCESS_JWT_EXPIRE_MINUTES: int = 30
     REFRESH_JWT_EXPIRE_MINUTES: int = 43200  # 30 days
 
     REDIS_HOST: str
@@ -39,11 +39,13 @@ class Settings(BaseSettings):
 
     @property
     def DATABASE_URL(cls):
-        return f'postgresql+asyncpg://{cls.POSTGRES_USER}:{cls.POSTGRES_PASSWORD}@{cls.POSTGRES_HOST}:{cls.POSTGRES_PORT}/{cls.POSTGRES_DB}'
+        return (f'postgresql+asyncpg://{cls.POSTGRES_USER}:{cls.POSTGRES_PASSWORD}'
+                f'@{cls.POSTGRES_HOST}:{cls.POSTGRES_PORT}/{cls.POSTGRES_DB}')
 
     @property
     def TEST_DATABASE_URL(cls):
-        return f'postgresql+asyncpg://{cls.TEST_POSTGRES_USER}:{cls.TEST_POSTGRES_PASSWORD}@{cls.TEST_POSTGRES_HOST}:{cls.TEST_POSTGRES_PORT}/{cls.TEST_POSTGRES_DB}'
+        return (f'postgresql+asyncpg://{cls.TEST_POSTGRES_USER}:{cls.TEST_POSTGRES_PASSWORD}'
+                f'@{cls.TEST_POSTGRES_HOST}:{cls.TEST_POSTGRES_PORT}/{cls.TEST_POSTGRES_DB}')
 
     @property
     def REDIS_URL(cls):
@@ -51,7 +53,7 @@ class Settings(BaseSettings):
 
     @property
     def DOMAIN_URL(cls):
-        return f'https://{cls.DOMAIN}' if cls.MODE == 'PROD' else f'http://127.0.0.1:8000'
+        return f'https://{cls.DOMAIN}' if cls.MODE == 'PROD' else 'http://127.0.0.1:8000'
 
     @property
     def AUTH_JWT_PRIVATE(cls):

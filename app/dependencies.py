@@ -1,8 +1,8 @@
-from fastapi import Request, Depends
+from fastapi import Depends, Request
 
-from app.auth.token import decode_jwt
 from app.auth.router import update_jwt_cookies_depends_on_refresh_token
-from app.exceptions.exceptions import NoPermissionsException, NoParamException
+from app.auth.token import decode_jwt
+from app.exceptions.exceptions import NoParamException, NoPermissionsException
 
 
 def get_profile_id_from_path_params(request: Request):

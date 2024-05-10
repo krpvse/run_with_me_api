@@ -1,8 +1,8 @@
 from sqlalchemy import ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column
 
-from app.database import Base
 from app.dao.types import int_pk
+from app.database import Base
 
 
 class RefreshJWT(Base):

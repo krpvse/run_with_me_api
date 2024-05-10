@@ -1,7 +1,9 @@
 import uuid
+
 from passlib.context import CryptContext
 
 from app.cache.cache import RegConfirmCodeCache
+
 
 pwd_context = CryptContext(schemes=['bcrypt'], deprecated='auto')
 

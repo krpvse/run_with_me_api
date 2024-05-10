@@ -19,9 +19,8 @@ class RegConfirmEmailMessage(UserEmailMessage):
 
         self['Subject'] = 'Подтверждение регистрации'
         self.set_content(
-            f"""
-            <h3>Чтобы подтвердить почту для регистрации на сайте {settings.DOMAIN_URL}, перейдите по ссылке: {self.confirmation_link}</h3>
-            """,
+            f"""<h3>Чтобы подтвердить почту для регистрации на сайте {settings.DOMAIN_URL},
+             перейдите по ссылке: {self.confirmation_link}</h3>""",
             subtype='html'
         )
 
@@ -30,9 +29,7 @@ class RemindConfirmEmailMessage(RegConfirmEmailMessage):
     def __init__(self, email_to: EmailStr, confirmation_link: str):
         super().__init__(email_to, confirmation_link)
         self.set_content(
-            f"""
-            <h3>Вы так и не завершили регистрацию на сайте {settings.DOMAIN_URL}. Перейдите по ссылке, 
-            чтобы подтвердить почту: {self.confirmation_link}</h3>
-            """,
+            f"""<h3>Вы так и не завершили регистрацию на сайте {settings.DOMAIN_URL}.
+             Перейдите по ссылке, чтобы подтвердить почту: {self.confirmation_link}</h3>""",
             subtype='html'
         )

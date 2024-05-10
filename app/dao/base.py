@@ -1,4 +1,4 @@
-from sqlalchemy import insert, select, update, delete
+from sqlalchemy import delete, insert, select, update
 
 from app.database import scoped_session
 from app.exceptions.error_handlers import dao_error_handler

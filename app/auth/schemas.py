@@ -1,4 +1,4 @@
-from string import digits, ascii_uppercase
+from string import ascii_uppercase, digits
 
 from pydantic import BaseModel, EmailStr, field_validator, model_validator
 

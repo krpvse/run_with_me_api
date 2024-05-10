@@ -1,18 +1,14 @@
 from datetime import datetime, timedelta
 
 import jwt
-from fastapi import Request, HTTPException
+from fastapi import HTTPException, Request
 
-from app.settings import settings
 from app.auth.dao import RefreshJWTDAO
-from app.profiles.dao import UsersDAO
+from app.exceptions.exceptions import (ExpiredTokenException, FailedToCreateTokenException, InvalidTokenException,
+                                       UserDoesNotExistException,)
 from app.logger import logger
-from app.exceptions.exceptions import (
-    FailedToCreateTokenException,
-    InvalidTokenException,
-    UserDoesNotExistException,
-    ExpiredTokenException
-)
+from app.profiles.dao import UsersDAO
+from app.settings import settings
 
 
 def encode_jwt(

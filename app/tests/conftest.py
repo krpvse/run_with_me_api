@@ -1,14 +1,14 @@
+import asyncio
 import json
 
-import asyncio
 import pytest
-from sqlalchemy import insert
 from httpx import AsyncClient
+from sqlalchemy import insert
 
-from app.database import Base, session_maker, engine
-from app.settings import settings
-from app.profiles.models import Users, Runners, Coordinates
+from app.database import Base, engine, session_maker
 from app.main import app as fastapi_app
+from app.profiles.models import Coordinates, Runners, Users
+from app.settings import settings
 
 
 @pytest.fixture(scope='session', autouse=True)

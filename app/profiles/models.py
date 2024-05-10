@@ -1,11 +1,11 @@
 import datetime
 
-from sqlalchemy import String, ForeignKey
-from sqlalchemy.schema import UniqueConstraint
+from sqlalchemy import ForeignKey, String
 from sqlalchemy.orm import Mapped, mapped_column, relationship
+from sqlalchemy.schema import UniqueConstraint
 
-from app.database import Base
 from app.dao.types import int_pk
+from app.database import Base
 
 
 class Coordinates(Base):

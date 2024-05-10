@@ -1,11 +1,11 @@
 from sqlalchemy import select
 from sqlalchemy.orm import selectinload
 
-from app.database import scoped_session
 from app.dao.base import BaseDAO
-from app.profiles.models import Users, Runners, Coordinates
-from app.profiles.dto import ProfileInfoDTO, CoordinatesDTO
+from app.database import scoped_session
 from app.exceptions.error_handlers import dao_error_handler
+from app.profiles.dto import CoordinatesDTO, ProfileInfoDTO
+from app.profiles.models import Coordinates, Runners, Users
 
 
 class UsersDAO(BaseDAO):

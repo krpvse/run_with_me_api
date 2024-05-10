@@ -1,13 +1,12 @@
 from logging.config import fileConfig
 
-from sqlalchemy import engine_from_config
-from sqlalchemy import pool
 from alembic import context
+from sqlalchemy import engine_from_config, pool
 
-from app.settings import settings
+from app.auth.models import RefreshJWT  # noqa
 from app.database import Base
 from app.profiles.models import Users  # noqa
-from app.auth.models import RefreshJWT # noqa
+from app.settings import settings
 
 
 config = context.config

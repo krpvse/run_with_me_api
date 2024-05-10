@@ -1,20 +1,16 @@
-from fastapi import APIRouter, Response, Depends
+from fastapi import APIRouter, Depends, Response
 from pydantic import UUID4
 
-from app.auth.schemas import SUserAuth, SUserReg
 from app.auth import utils as auth_utils
+from app.auth.schemas import SUserAuth, SUserReg
 from app.auth.token import create_tokens, recreate_tokens
-from app.profiles.dao import UsersDAO, RunnersDAO
 from app.cache.cache import RegConfirmCodeCache
-from app.tasks.tasks import send_registration_confirmation_email
-from app.settings import settings
+from app.exceptions.exceptions import (ExistingUserException, InvalidEmailOrPasswordException,
+                                       NotConfirmedEmailException, NotExistingConfirmationCodeException,)
 from app.logger import logger
-from app.exceptions.exceptions import (
-    InvalidEmailOrPasswordException,
-    ExistingUserException,
-    NotExistingConfirmationCodeException,
-    NotConfirmedEmailException
-)
+from app.profiles.dao import RunnersDAO, UsersDAO
+from app.settings import settings
+from app.tasks.tasks import send_registration_confirmation_email
 
 
 router = APIRouter(

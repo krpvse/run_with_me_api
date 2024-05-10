@@ -1,7 +1,7 @@
 import celery
 
-from app.settings import settings
 from app.logger import setup_logging
+from app.settings import settings
 
 
 app = celery.Celery(

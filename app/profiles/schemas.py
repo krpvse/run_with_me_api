@@ -18,7 +18,6 @@ class SProfile(BaseModel):
     speed_from: Optional[int] = None
     speed_to: Optional[int] = None
 
-
     @model_validator(mode='before')
     @classmethod
     def check_all_none(cls, values):

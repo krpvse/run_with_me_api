@@ -1,16 +1,17 @@
+import asyncio
 import datetime
 
-import asyncio
-from pydantic import EmailStr
-from celery.utils.log import get_task_logger
 from celery.schedules import crontab
+from celery.utils.log import get_task_logger
+from pydantic import EmailStr
 
+from app.auth.utils import create_confirmation_code
+from app.profiles.dao import RunnersDAO, UsersDAO
 from app.settings import settings
 from app.tasks.celery_app import app
-from app.tasks.email.templates import RegConfirmEmailMessage, RemindConfirmEmailMessage
 from app.tasks.email.tasks import send_email
-from app.profiles.dao import UsersDAO, RunnersDAO
-from app.auth.utils import create_confirmation_code
+from app.tasks.email.templates import RegConfirmEmailMessage, RemindConfirmEmailMessage
+
 
 logger = get_task_logger(__name__)
 
@@ -34,7 +35,7 @@ def check_unconfirmed_users():
     unconfirmed_users = loop.run_until_complete(UsersDAO.find(confirmed_email=False))
 
     if not unconfirmed_users:
-        logger.info(f'Unconfirmed users was checked. All is confirmed!')
+        logger.info('Unconfirmed users was checked. All is confirmed!')
         return
 
     for user in unconfirmed_users:

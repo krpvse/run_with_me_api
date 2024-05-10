@@ -1,8 +1,8 @@
-from smtplib import SMTP
 from email.message import EmailMessage
+from smtplib import SMTP
 
-from app.settings import settings
 from app.exceptions.error_handlers import smtp_error_handler
+from app.settings import settings
 
 
 @smtp_error_handler
