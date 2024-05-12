@@ -1,0 +1,51 @@
+version: '3'
+
+services:
+  postgres_db:
+    image: postgres
+    container_name: postgres_db
+    restart: always
+    env_file:
+      - .env-non-dev
+
+  redis_db:
+    image: redis
+    container_name: redis_db
+    restart: always
+    env_file:
+      - .env-non-dev
+
+  api:
+    build: .
+    container_name: api
+    restart: always
+    env_file:
+      - .env-non-dev
+    ports:
+      - '8000:8000'
+    depends_on:
+      - postgres_db
+      - redis_db
+    command: bash -c "alembic revision --autogenerate -m 'Make migrations' && alembic upgrade head && gunicorn src.main:app --workers 4 --worker-class uvicorn.workers.UvicornWorker --bind=0.0.0.0:8000"
+
+  celery:
+    build: .
+    container_name: celery
+    restart: always
+    env_file:
+      - .env-non-dev
+    depends_on:
+      - redis_db
+    command: celery --app=src.tasks.celery_app:app worker -l INFO
+
+  flower:
+    build: .
+    container_name: flower
+    restart: always
+    env_file:
+      - .env-non-dev
+    ports:
+      - '5555:5555'
+    depends_on:
+      - redis_db
+    command: celery --app=src.tasks.celery_app:app flower

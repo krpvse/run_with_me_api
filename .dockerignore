@@ -1,0 +1,15 @@
+__pycache__/
+.idea/
+.git/
+venv/
+.pytest_cache/
+celerybeat-schedule
+README.md
+docs/
+pre-commit/
+scripts/
+.gitignore
+docker-compose.yml
+Dockerfile
+.dockerignore
+.env-non-dev

@@ -1,9 +1,9 @@
 .env
+.env-non-dev
 __pycache__/
 .idea/
 venv/
 .pytest_cache/
-app/logs/
 celerybeat-schedule
-app/auth/certs/jwt-private.pem
-app/auth/certs/jwt-public.pem
+src/auth/certs/jwt-private.pem
+src/auth/certs/jwt-public.pem
