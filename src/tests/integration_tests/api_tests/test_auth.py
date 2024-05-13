@@ -7,9 +7,9 @@ from httpx import AsyncClient
     ('Leonid', 'leonid@gmail.com', 'Leonid123', 'Leonid123', 200),
 
     # negative - existing user
-    ('Sergey', 'karpov@gmail.com', 'Karpov123', 'Karpov123', 409),
-    ('Inna', 'sidorova@yandex.ru', 'InnaSid2222', 'InnaSid2222', 409),
-    ('Ivan', 'sigarev@gmail.com', 'sigareVV333', 'sigareVV333', 409),
+    ('Sergey', 'karpov.important@gmail.com', 'Karpov123', 'Karpov123', 409),
+    ('Inna', 'sidorova@example.ru', 'InnaSid2222', 'InnaSid2222', 409),
+    ('Ivan', 'sigarev@example.com', 'sigareVV333', 'sigareVV333', 409),
 
     # negative - name validation
     ('', 'test@gmail.com', 'Test123', 'Test123', 422),
@@ -41,10 +41,12 @@ async def test_register(name, email, password1, password2, status_code, ac: Asyn
 
 
 @pytest.mark.parametrize('email,password1,status_code', [
-    # positive
-    ('karpov@gmail.com', 'Karpov123', 200),
-    ('sidorova@yandex.ru', 'InnaSid2222', 200),
-    ('sigarev@gmail.com', 'sigareVV333', 200),
+    # positive - confirmed email
+    ('karpov.important@gmail.com', 'Karpov123', 200),
+
+    # negative - unconfirmed email
+    ('sidorova@example.ru', 'InnaSid2222', 400),
+    ('sigarev@example.com', 'sigareVV333', 400),
 
     # negative - wrong email or password
     ('karpov@gmail.com', 'Karpov123ERROR', 401),
@@ -61,11 +63,13 @@ async def test_login(email, password1, status_code, ac: AsyncClient):
 # positive - logout authenticated user
 async def test_logout_authenticated(authenticated_ac: AsyncClient):
     assert authenticated_ac.cookies.get('access_token')
+    assert authenticated_ac.cookies.get('refresh_token')
 
     response = await authenticated_ac.post('/api/auth/logout')
 
     assert response.status_code == 200
     assert authenticated_ac.cookies.get('access_token') is None
+    assert authenticated_ac.cookies.get('refresh_token') is None
 
 
 # positive - logout unauthenticated user

@@ -1,14 +1,15 @@
 [
   {
-    "email": "karpov@gmail.com",
+    "email": "karpov.important@gmail.com",
+    "confirmed_email": true,
     "hashed_password": "$2b$12$ppguFcWTS5FkBudp2cVre.HgBNhAGHQ1/kSh82/InCFihswFFlr2q"
   },
   {
-    "email": "sidorova@yandex.ru",
+    "email": "sidorova@example.ru",
     "hashed_password": "$2b$12$kYZvOYCwLrIiCZ4rogtzNunl4.mDpTuABRoePuY9U4exfA6oL0aUe"
   },
   {
-    "email": "sigarev@gmail.com",
+    "email": "sigarev@example.com",
     "hashed_password": "$2b$12$7OG8CdPibTxdU4RWdGjGBOQfgld3zedFS6DYVMW13oYBDJKk1Vv1C"
   }
 ]

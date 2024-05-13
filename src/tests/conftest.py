@@ -20,7 +20,7 @@ async def prepare_database():
         await connection.run_sync(Base.metadata.create_all)
 
     def open_mock_json(model: str):
-        with open(f'app/tests/mock_data/mock_{model}.json', encoding='utf-8') as file:
+        with open(f'src/tests/mock_data/mock_{model}.json', encoding='utf-8') as file:
             return json.load(file)
 
     users = open_mock_json('users')
@@ -49,11 +49,12 @@ async def ac():
 async def authenticated_ac():
     async with AsyncClient(app=fastapi_app, base_url='http://test') as ac:
         response = await ac.post('/api/auth/login', json={
-            'email': 'karpov@gmail.com',
+            'email': 'karpov.important@gmail.com',
             'password1': 'Karpov123',
         })
         assert response.status_code == 200
-        assert ac.cookies['access_token']
+        assert ac.cookies.get('access_token')
+        assert ac.cookies.get('refresh_token')
         yield ac
 
 

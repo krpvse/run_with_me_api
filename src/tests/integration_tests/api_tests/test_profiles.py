@@ -17,7 +17,7 @@ from src.profiles.dao import UsersDAO
     ('SomeText', 422),
 ])
 async def test_get_profile_info(profile_id, status_code, ac: AsyncClient):
-    response = await ac.get(f'api/profiles/{profile_id}')
+    response = await ac.get(f'api/profiles/id{profile_id}')
 
     assert response.status_code == status_code
     if response.status_code == 200:
@@ -52,7 +52,7 @@ async def test_get_profile_info(profile_id, status_code, ac: AsyncClient):
 async def test_edit_profile(profile_id, update_data, is_changed, status_code, authenticated_ac: AsyncClient):
     profile_before = await UsersDAO.get_user_info(user_id=profile_id)
 
-    response = await authenticated_ac.post(f'api/profiles/edit-profile/{profile_id}', json=update_data)
+    response = await authenticated_ac.post(f'api/profiles/id{profile_id}/edit', json=update_data)
     assert response.status_code == status_code
 
     profile_after = await UsersDAO.get_user_info(user_id=profile_id)
