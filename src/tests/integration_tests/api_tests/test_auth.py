@@ -4,7 +4,7 @@ from httpx import AsyncClient
 
 @pytest.mark.parametrize('name,email,password1,password2,status_code', [
     # positive
-    ('Leonid', 'leonid@gmail.com', 'Leonid123', 'Leonid123', 200),
+    ('Leonid', 'leonid@example.com', 'Leonid123', 'Leonid123', 200),
 
     # negative - existing user
     ('Sergey', 'karpov.important@gmail.com', 'Karpov123', 'Karpov123', 409),
@@ -77,3 +77,4 @@ async def test_logout_unauthenticated(ac: AsyncClient):
     response = await ac.post('/api/auth/logout')
     assert response.status_code == 200
     assert ac.cookies.get('access_token') is None
+    assert ac.cookies.get('refresh_token') is None

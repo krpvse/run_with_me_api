@@ -45,6 +45,7 @@ async def test_get_profile_info(profile_id, status_code, ac: AsyncClient):
     (1, {'name': None}, False, 422),
     (1, {'description': None}, False, 422),
     (1, {'description': 999}, False, 422),
+    (1, {'description': 999}, False, 422),
     (1, {'age': 'Text'}, False, 422),
     (1, {'distance_from': 'Text'}, False, 422),
     (1, {'speed_to': 'Text'}, False, 422),

@@ -1,32 +1,19 @@
 version: '3'
 
 services:
-  postgres_db:
+  db:
     image: postgres
-    container_name: postgres_db
+    container_name: db
     restart: always
     env_file:
       - .env-non-dev
 
-  redis_db:
+  redis:
     image: redis
-    container_name: redis_db
+    container_name: redis
     restart: always
     env_file:
       - .env-non-dev
-
-  api:
-    build: .
-    container_name: api
-    restart: always
-    env_file:
-      - .env-non-dev
-    ports:
-      - '8000:8000'
-    depends_on:
-      - postgres_db
-      - redis_db
-    command: bash -c "alembic revision --autogenerate -m 'Make migrations' && alembic upgrade head && gunicorn src.main:app --workers 4 --worker-class uvicorn.workers.UvicornWorker --bind=0.0.0.0:8000"
 
   celery:
     build: .
@@ -35,7 +22,7 @@ services:
     env_file:
       - .env-non-dev
     depends_on:
-      - redis_db
+      - redis
     command: celery --app=src.tasks.celery_app:app worker -l INFO
 
   flower:
@@ -47,5 +34,45 @@ services:
     ports:
       - '5555:5555'
     depends_on:
-      - redis_db
+      - redis
     command: celery --app=src.tasks.celery_app:app flower
+
+  test_db:
+    image: postgres
+    container_name: test_db
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: test_run_with_me_app_db
+
+  tests:
+    build: .
+    container_name: tests
+    env_file:
+      - .env-non-dev
+    environment:
+      TEST_POSTGRES_HOST: test_db
+      TEST_POSTGRES_PORT: 5432
+      TEST_POSTGRES_USER: postgres
+      TEST_POSTGRES_PASSWORD: postgres
+      TEST_POSTGRES_DB: test_run_with_me_app_db
+    depends_on:
+      - db
+      - redis
+      - celery
+      - flower
+      - test_db
+    command: pytest -v -s
+
+  api:
+    build: .
+    container_name: api
+    restart: always
+    env_file:
+      - .env-non-dev
+    ports:
+      - '8000:8000'
+    depends_on:
+      - tests
+    command: bash -c "alembic revision --autogenerate -m 'Make migrations' && alembic upgrade head && gunicorn src.main:app --workers 4 --worker-class uvicorn.workers.UvicornWorker --bind=0.0.0.0:8000"

@@ -58,10 +58,12 @@ async def authenticated_ac():
         yield ac
 
 
-# From "pytest-asyncio" documentation
 @pytest.fixture(scope='session')
 def event_loop(request):
-    """Create an instance of default event loop for each test case"""
-    loop = asyncio.get_event_loop_policy().new_event_loop()
+    try:
+        loop = asyncio.get_running_loop()
+    except RuntimeError:
+        loop = asyncio.new_event_loop()
+
     yield loop
     loop.close()

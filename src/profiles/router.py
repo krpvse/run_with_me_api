@@ -26,10 +26,10 @@ async def get_profile_info(profile_id: int) -> ProfileInfoDTO:
 
 @router.post('/id{profile_id}/edit', dependencies=[Depends(disallow_without_owner_permissions)])
 async def edit_profile(profile_id: int, update_data: SProfile):
-    updated_ids = await RunnersDAO.update(update_data=update_data.dict(), user_id=profile_id)
+    updated_ids = await RunnersDAO.update(update_data=update_data.model_dump(), user_id=profile_id)
     if not updated_ids:
         raise UnknownAPIException
-    logger.debug(f'User id{profile_id} updated profile info: {update_data.dict()}')
+    logger.debug(f'User id{profile_id} updated profile info: {update_data.model_dump()}')
     return {'msg': 'Profile is updated', 'profile_id': profile_id}
 
 
@@ -64,7 +64,7 @@ async def add_coordinates(profile_id: int, data: SCoords):
     new_id = await CoordinatesDAO.add_one(runner_id=profile_id, latitude=data.latitude, longitude=data.longitude)
     if not new_id:
         raise UnknownAPIException
-    logger.debug(f'User id{profile_id} added coordinates for profile: {data.dict()}')
+    logger.debug(f'User id{profile_id} added coordinates for profile: {data.model_dump()}')
     return {
         'msg': 'Coordinates is added',
         'coordinates_id': new_id,
