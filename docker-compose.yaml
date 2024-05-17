@@ -35,7 +35,7 @@ services:
       - '5555:5555'
     depends_on:
       - redis
-    command: celery --app=src.tasks.celery_app:app flower
+    command: bash -c "pip install flower && celery --app=src.tasks.celery_app:app flower"
 
   test_db:
     image: postgres
@@ -63,7 +63,7 @@ services:
       - celery
       - flower
       - test_db
-    command: pytest -v -s
+    command: bash -c "pip install -r requirements-test.txt && pytest -v -s"
 
   api:
     build: .

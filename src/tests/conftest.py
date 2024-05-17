@@ -58,12 +58,11 @@ async def authenticated_ac():
         yield ac
 
 
-@pytest.fixture(scope='session')
+@pytest.fixture(scope='session', autouse=True)
 def event_loop(request):
     try:
         loop = asyncio.get_running_loop()
     except RuntimeError:
         loop = asyncio.new_event_loop()
-
     yield loop
     loop.close()
