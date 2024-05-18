@@ -51,12 +51,6 @@ services:
     container_name: tests
     env_file:
       - .env-non-dev
-    environment:
-      TEST_POSTGRES_HOST: test_db
-      TEST_POSTGRES_PORT: 5432
-      TEST_POSTGRES_USER: postgres
-      TEST_POSTGRES_PASSWORD: postgres
-      TEST_POSTGRES_DB: test_run_with_me_app_db
     depends_on:
       - db
       - redis
