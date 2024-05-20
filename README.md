@@ -72,7 +72,7 @@ uvicorn src.main:app --reload
 
 - Установить Docker и Docker Compose:
 ````
-sh scripts/docker.sh
+sh scripts/docker/docker.sh
 ````
 
 - Запустить приложение в контейнерах:
