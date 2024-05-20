@@ -40,7 +40,7 @@ openssl genrsa -out src/auth/certs/jwt-private.pem 2048
 openssl rsa -in src/auth/certs/jwt-private.pem -outform PEM -pubout -out src/auth/certs/jwt-public.pem
 ````
 
-### 3. Запуск приложения без Docker
+### 3. Запустить приложение без Docker
 
 Важно! Перед запуском приложения в вашей системе должны быть установлены PostgreSQL и Redis. 
 
@@ -66,7 +66,7 @@ pip install -r requirements-dev.txt
 uvicorn src.main:app --reload
 ````
 
-### 4. Запуск приложения с Docker
+### 4. Запустить приложение с Docker
 
 Будут запущены сразу 7 Docker-контейнеров, в числе которых есть контейнер с тестами.
 
